@@ -18,7 +18,7 @@ dcc is a C compiler.
 ## Status
 **Still in ALPHA stage.**
 
-[Demo]()
+[Demo](https://youtu.be/TPWxtAFwiks)
 
 ## Targets supported
 - `x86_64-linux-gnu`
