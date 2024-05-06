@@ -1,7 +1,7 @@
-`dcc` is a C compiler.
+dcc is a C compiler.
 
 
-## [Features]()
+## [Features](https://github.com/dipa09/dcc/blob/main/status.md)
 - Built-in C preprocessor.
 - C11.
 - Good diagnostic messages.
