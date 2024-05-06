@@ -59,8 +59,9 @@ Features that won't be implemented:
 - Anonymous struct/union members within structs/unions
 - Incomplete enums
 
-Extensions are allowed in any C version. If you want to restrict your program
-to standard C you can pass `-Werror=pedantic`, or just `-Wpedantic`, with `-std=c89/99/11`.
+Extensions are allowed in any C version.
+
+If you want to restrict your program to standard C you can pass `-Werror=pedantic`, or just `-Wpedantic`, with `-std=c89/99/11`.
 
 
 ## Built-in Functions
@@ -118,8 +119,10 @@ to standard C you can pass `-Werror=pedantic`, or just `-Wpedantic`, with `-std=
 
 New
 - `int __builtin_same_type(expression-or-type, expression-or-type)`
+  
    Return 1 if the types of the given expressions are exactly the same, 0 otherwise.
 - `int __builtin_switch_strategy(compile-time-integer-expression)`
+
    Tell the compiler to use the specified switch lowering strategy for the following switch
    statements in the current function. Always return 0.
 
