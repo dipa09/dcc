@@ -20,6 +20,22 @@ dcc is a C compiler.
 
 [Demo](https://youtu.be/TPWxtAFwiks)
 
+Successful builds:
+[Meow hash](https://github.com/cmuratori/meow_hash), 
+[Nuklear](https://github.com/Immediate-Mode-UI/Nuklear), 
+[chibicc](https://github.com/rui314/chibicc), 
+[cproc](https://sr.ht/~mcf/cproc), 
+[lemon](https://compiler-dept.github.io/lemon), 
+[minilua](https://github.com/edubart/minilua), 
+[minivorbis](https://github.com/edubart/minivorbis), 
+[miniz-3.0.2](https://github.com/richgel999/miniz), 
+[q3vm](https://github.com/jnz/q3vm), 
+[renderer](https://github.com/zauonlok/renderer), 
+[sqlite](https://github.com/sqlite/sqlite), 
+[stb](https://github.com/nothings/stb/), 
+[treecc](https://github.com/rweather/treecc).
+
+
 ## Targets supported
 - `x86_64-linux-gnu`
 - `aarch64-linux-gnu` (in progress)
