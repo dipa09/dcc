@@ -67,7 +67,7 @@ Compilation speed for `dcc.2`: 298621.99 LOC/s
 
 `dcc.2` is 10.95 times faster than `gcc-13.2.0`,
 
-`dcc.1` is 1.06 times faster than `dcc.0` with a size reduction of 100488 bytes.
+`dcc.1` is 1.06 times faster than `dcc.0` with a size reduction of 258200 bytes.
 
 
 ## Testing
