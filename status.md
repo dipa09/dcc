@@ -183,3 +183,227 @@ Missing features:
 - AVX and beyond
 - Error checking for invalid operands (the compiler will just assert and crash)
 - Legacy instructions
+
+
+## Options
+Command line options are organized by category.
+
+```
+$ dcc -help
+Usage: dcc [options] file...
+  -help=all                   Show everything
+  -help=common                Show all common options
+  -help=diagnostic            Show diagnostics and UI options
+  -help=warning               Show warning options
+  -help=optimization          Show optimization options
+  -help=language              Show options related to the C language specifications
+  -help=preprocess            Show preprocessor's options
+  -help=developer             Show developer options
+  -help=codegen               Show code generation options
+  -help=instrument            Show instrumentation options
+  -help=machine               Show target machine options
+  -help=debug                 Show debugging options
+  -help=link                  Show linker options
+  -help=directory             Show directory options
+
+Note:
+  You can specify or disable several option categories
+    -help=warning,developer     will display warnings and developer options, while
+    -help=^warning              will display all non-warning options
+```
+
+List of options excluding warnings and developer options.
+```
+$ dcc -help=^warning,^developer
+Usage: dcc [options] file...
+Options:
+  -D<name=definition>           Define <macro> to <value> (or 1 if <value> omitted)
+  -E                            Only run the preprocessor
+  -H                            Show header includes and nesting depth
+  -I <dir>                      Add directory to SYSTEM and QUOTE include search path
+  -M                            Output dependencies as rules suitable for 'make'
+  -MM                           The same as -M, but ignore system headers
+  -O<level>                     Set optimization level
+  -S                            Stop after compilation stage, do not run the assembler
+  -U<name>                      Undefine macro <macro>
+  -X                            Pass the following options directly to the linker until --
+  -ansi                         Equivalent to -std=c90
+  -c                            Stop after assembling stage, do not run the linker
+  -g                            Generate debug information in the default format
+  -help=[category],...          Display this message on stdout
+  -imacros <file>               Include macros from file before parsing
+  -include <file>               Include <file> before parsing
+  -iquote <directory>           Add directory to QUOTE include search path
+  -isystem <directory>          Add directory to SYSTEM include search path
+  -l<library>                   Search 'library' when linking
+  -nostdinc                     Do not search the standard system directories for header files
+  -o <file>                     Specify the primary output destination file
+  -pthread                      Link with POSIX threads library
+  -std=<version>                Select the language standard (C11 with extensions by default)
+  -undef                        Undefine all system defines
+  -v                            Print driver's commands
+  -version                      Print the version and quit
+  -w                            Inhibit all warning messages
+  -x <language>                 Specify the input source language
+  -fasm                         Recognize 'asm', 'inline' and 'typeof' as keywords (enabled by default)
+  -fcheck-recover=[recovery]    Select the recovery mode for run-time checks (default is abort)
+  -fcheck-signed-overflow       Enable run-time signed integer overflow checking
+  -fcommon                      Put uninitialized globals in the common section
+  -fdiagnostics-color           Colorize diagnostics
+  -fdiagnostics-lines=<number>  Set how many source's lines print after the diagnostic (3 by default)
+  -fdiagnostics-show-option     Amend appropriate diagnostic messages with the command line option that controls them
+  -fdirectives-only             Do not expand macros during preprocessing, except __FILE__ and __LINE__
+  -fhosted                      Assume hosted environment (enabled by default)
+  -fmax-errors=<number>         Maximum number of errors to report
+  -fplugin=<name.so>            Load plugin code
+  -fplugin-arg                  Pass the followin options directly to the last plugin until -- is encountered
+  -fpreprocessed                Consider the input files already preprocessed
+  -fsyntax-only                 Check the code for syntax errors
+  -ftabstop=<width>             Select how long a tab is (8 by default)
+  -ftrack-macro-expansion       Show macro definition in diagnostics related to macros
+  -ftrivial-auto-var-init       Automatically initialize non-initialized variables to zero
+  -fuse-ld=<name>               Specify the linker to use
+  -march=<cpu-type>             Generate code for the specified machine type
+  -mred-zone                    Use the so-called red zone for x86-64 code
+  -gcolumn-info                 Emit location column info into DWARF debugging information
+  -gdwarf                       Generate debug information in default version of DWARF format
+  -gstrict-dwarf                Disallow extensions of the selcted DWARF format
+```
+
+## Warnings
+List of warnings currently implemented.
+```
+  -Wabsolute-value
+  -Waddress
+  -Waddress-of-packed-member
+  -Waggregate-return
+  -Wall
+  -Warray-bounds
+  -Wattributes
+  -Wbad-function-cast
+  -Wbool-compare
+  -Wbool-operation
+  -Wbuiltin-declaration-mismatch
+  -Wbuiltin-macro-redefined
+  -Wcast-align
+  -Wcast-function-type
+  -Wcast-qual
+  -Wchar-subscripts
+  -Wcomment
+  -Wconversion
+  -Wdangling-else
+  -Wdeclaration-after-statement
+  -Wdeprecated-declarations
+  -Wdesignated-init
+  -Wdiscard-qualifiers
+  -Wdivision-by-zero
+  -Wdo-while
+  -Wdouble-promotion
+  -Wduplicate-decl-specifier
+  -Wduplicated-branches
+  -Wduplicated-cond
+  -Wempty-body
+  -Wenum-compare
+  -Wenum-conversion
+  -Werror=<warning>
+  -Weverything
+  -Wextra
+  -Wextra-tokens
+  -Wflexible-array-array
+  -Wflexible-array-nested
+  -Wflexible-array-sizeof
+  -Wfloat-equal
+  -Wformat
+  -Wformat-contains-nul
+  -Wformat-extra-args
+  -Wformat-nonliteral
+  -Wformat-signedness
+  -Wformat-zero-length
+  -Wfree-nonheap-object
+  -Wignored-attributes
+  -Wignored-qualifiers
+  -Wimplicit
+  -Wimplicit-function-declaration
+  -Wimplicit-int
+  -Wincompatible-pointer-types
+  -Wint-conversion
+  -Wint-in-bool-context
+  -Wint-to-pointer-cast
+  -Winvalid-memory-model
+  -Wlarger-than=<bytes>
+  -Wlogical-not-parentheses
+  -Wlogical-op
+  -Wmacro-redefined
+  -Wmain
+  -Wmemset-elt-size
+  -Wmemset-transposed-args
+  -Wmisleading-indentation
+  -Wmismatched-dealloc
+  -Wmissing-declaration
+  -Wmissing-field-initializers
+  -Wmissing-prototypes
+  -Wnested-externs
+  -Wnon-pointer-null
+  -Wnonnull
+  -Wnonnull-compare
+  -Wold-style-declaration
+  -Woverflow
+  -Woverride-init
+  -Wpacked-not-aligned
+  -Wpadded
+  -Wparentheses
+  -Wpedantic
+  -Wpointer-arith
+  -Wpointer-compare
+  -Wpointer-sign
+  -Wpointer-to-int-cast
+  -Wpointer-type-mismatch
+  -Wpragmas
+  -Wprio-ctor-dtor
+  -Wptr-subtraction-blows
+  -Wredundant-decls
+  -Wreturn-local-addr
+  -Wreturn-type
+  -Wsequence-point
+  -Wshadow
+  -Wshift-count-negative
+  -Wshift-count-overflow
+  -Wshift-negative-value
+  -Wshift-overflow
+  -Wsign-compare
+  -Wsizeof-array-argument
+  -Wsizeof-array-div
+  -Wsizeof-bool
+  -Wsizeof-pointer-div
+  -Wsizeof-pointer-memaccess
+  -Wstack-usage=bytes
+  -Wstrict-prototypes
+  -Wswitch
+  -Wswitch-bool
+  -Wswitch-default
+  -Wswitch-enum
+  -Wswitch-outside-range
+  -Wswitch-unreachable
+  -Wtautological-compare
+  -Wtype-limits
+  -Wtypedef-redefinition
+  -Wundef
+  -Wuninitialized
+  -Wunknown-pragmas
+  -Wunreachable-code
+  -Wunused
+  -Wunused-but-set-variable
+  -Wunused-const-variable
+  -Wunused-function
+  -Wunused-label
+  -Wunused-local-typedefs
+  -Wunused-macros
+  -Wunused-parameter
+  -Wunused-result
+  -Wunused-value
+  -Wunused-variable
+  -Wvarargs
+  -Wvolatile-register-var
+  -Wwrite-strings
+  -Wzero-length-bounds
+```
