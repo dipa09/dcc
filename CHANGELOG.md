@@ -23,61 +23,14 @@
 ### Added
 - Add attributes: `noinline`, `always_inline`, `hot`, `cold` and `noipa`.
 - Parse attributes after pointer types. e.g. `void *__attribute__((noinline)) foo();`
-
-- Add warnings:
-  - `-Wstack-usage`,
-  - `-Wcompare-distinct-pointer-types`,
-  - `-Winline`,
-  - `-Wunused-macros=main`,
-  - `-Wunused-macros=nosys`,
-  - `-Wunused-macros=all`,
-  - `-Wenum-int-mismatch`,
-  - `-Wtautological-overlap-compare`,
-  - `-Winvalid-memory-model`,
-  - `-Wundefined-internal`.
-
-- Add options:
-  - `-pthread`,
-  - `-foptim-report`,
-  - `-finline`,
-  - `-msse3`,
-  - `-mssse3`,
-  - `-msse4`,
-  - `-msse4.1`,
-	`-msse4.2`.
-
-- Add builtins:
-  - `__atomic_add_fetch`
-  - `__atomic_and_fetch`,
-  - `__atomic_clear`,
-  - `__atomic_compare_exchange_n`,
-  - `__atomic_compare_exchange`,
-  - `__atomic_exchange_n`,
-  - `__atomic_exchange`,
-  - `__atomic_fetch_add`,
-  - `__atomic_fetch_and`,
-  - `__atomic_fetch_nand`,
-  - `__atomic_fetch_or`,
-  - `__atomic_fetch_sub`,
-  - `__atomic_fetch_xor`,
-  - `__atomic_is_lock_free`,
-  - `__atomic_load_n`,
-  - `__atomic_load`,
-  - `__atomic_nand_fetch`,
-  - `__atomic_or_fetch`,
-  - `__atomic_signal_fence`,
-  - `__atomic_store_n`,
-  - `__atomic_store`,
-  - `__atomic_sub_fetch`,
-  - `__atomic_test_and_set`,
-  - `__atomic_thread_fence`,
-  - `__atomic_xor_fetch`,
-  - `__builtin_frame_address`,
-  - `__builtin_return_address`,
-  - `__builtin_stack_address`.
-
+- Add warnings: `-Wstack-usage`, `-Wcompare-distinct-pointer-types`, `-Winline`,
+  `-Wunused-macros=main`, `-Wunused-macros=nosys`, `-Wunused-macros=all`,
+  `-Wenum-int-mismatch`, `-Wtautological-overlap-compare`, `-Winvalid-memory-model`,
+  `-Wundefined-internal`.
+- Add options: `-pthread`, `-foptim-report`, `-finline`, `-msse3`, `-mssse3`, `-msse4`,
+  `-msse4.1`, `-msse4.2`.
+- Add builtins: `__atomic_*`, `__builtin_frame_address`, `__builtin_return_address`, `__builtin_stack_address`.
 - Implement `__builtin_unreachable` for `-O1` and `-O0`.
-
 - Add optimization passes:
   - Register promotion.
   - Dead code elimination.
@@ -87,50 +40,33 @@
   - Inlining.
   - Dead argument elimination.
   - Various form of CFG reductions.
-
 - Omit frame prolog/epilog for leaf functions with -O1, when possible.
 - Restore SWITCH reduction to range change.
 - Add SEL reduction for power of 2.
   e.g. `if (cond) flags |= The_Flag` => `flags |= (cond << bit(The_Flag))`
-
 - Build more open-source projects:
-  - [chibicc](https://github.com/rui314/chibicc),
-  - [cproc](https://sr.ht/~mcf/cproc),
-  - [gc](https://github.com/mkirchner/gc),
-  - [gennan](https://github.com/codeplea/genann),
-  - [quadsort](https://github.com/scandum/quadsort),
-  - [renderer](https://github.com/zauonlok/renderer),
-  - [rpng](https://github.com/raysan5/rpng),
-  - [siod](https://github.com/deriito/siod-v3.0),
-  - [sqlite3](https://github.com/sqlite/sqlite),
-  - [tinn](https://github.com/glouw/tinn).
+  [chibicc](https://github.com/rui314/chibicc),
+  [cproc](https://sr.ht/~mcf/cproc),
+  [gc](https://github.com/mkirchner/gc),
+  [gennan](https://github.com/codeplea/genann),
+  [quadsort](https://github.com/scandum/quadsort),
+  [renderer](https://github.com/zauonlok/renderer),
+  [rpng](https://github.com/raysan5/rpng),
+  [siod](https://github.com/deriito/siod-v3.0),
+  [sqlite3](https://github.com/sqlite/sqlite),
+  [tinn](https://github.com/glouw/tinn).
 
 
 ### Removed
 - Remove `-save-temps`.
 - Remove `-Wformat-security`.
 - Remove old debug-info code for recording type qualifiers.
-  Pros:
-  - they are not needed to actually debug an application,
-  - they make the executable bigger,
-  - implementation-wise they are akward,
-  - most people probably don't care.
-  Cons:
-  - One might want to inspect debug-info for getting AST info, but again we
-	provide better options for that.
 - Remove `file_scope` attribute. Now it's a custom attribute.
 
 
 ### Fixed
-- Fix warnings:
-  - `-Wignored-qualifiers`,
-  - `-Wmissing-prototypes`,
-  - `-Wreturn-local-addr`,
-  - `-Wshift-negative-value`,
-  - `-Wtype-limits`,
-  - `-Wenum-conversion`,
-  - `-Wtautological-compare`.
-
+- Fix warnings: `-Wignored-qualifiers`, `-Wmissing-prototypes`, `-Wreturn-local-addr`,
+  `-Wshift-negative-value`, `-Wtype-limits`, `-Wenum-conversion`, `-Wtautological-compare`.
 - Fix linking bug caused by missing some CRT objects.
 - Fix self-hosting regressions.
 - Fix edge case bugs in initializers.
@@ -140,9 +76,6 @@
 
 ### Changed
 - Show function definition on calls with mismatch argument count.
-- `-Wpedantic` with `-std=c89` is best effort, it won't catch all later features uses.
-  Most people have move on to later standards, so it doesn't make sense to add
-  complexity for this.
 - Display helper message for invalid multi-dimensional arrays only once,
   since it's always the same.
 - Change `__FUNCTION__` behavior like MSVC.
@@ -194,15 +127,12 @@
   add support for pattern initialization.
 - Fuse load followed by arithmetic instruction. Enable this by default, since
   the compiler's performance didn't resent much.
-- Do not allow `extern void` variables. For some reason GCC and CLANG allow them, while MSVC doesn't.
-- Set max array size to 4GB. MSVC limit is 2GB, CLANG limit is much bigger
-  (thousand of TB) and GCC even larger (`__SIZE_MAX__/2` or something).
-  In practice the max stack size is around 10-30MB and allocating arrays that big is unusual.
-  Maybe we should add a flag (-fstack-limit maybe?) to allow huge arrays, since they might be
-  used for debugging purposes.
+- Do not allow `extern void` variables.
+- Set max array size to 4GB.
 - Disable `__label__` parsing.
 - Do not allow unicode identifiers, since it adds complexity for an arguably useless
   feature (i.e. code is written in english).
+  
   It's also a source of security [vulnerabilities](http://www.unicode.org/reports/tr55/).
 
 
