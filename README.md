@@ -148,7 +148,7 @@ point the compiler becomes immune to it.
 
 
 ## Does compilation time matter? (11/10/2024)
-Rougly a year ago I started measuring the time spent waiting for the compiler
+Approximately a year ago I started measuring the time spent waiting for the compiler
 for the debug build, so no optimizations enabled, and these are the results:
 
 |                                    | gcc         | dcc         |
