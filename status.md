@@ -33,8 +33,6 @@ Include guards are recognized when written as usual
 Missing features:
 - `_Atomic`, `stdatomic.h`
 - struct/union definitions inside `sizeof/typeof/alignof`
-- Universal character names `\u`, `\U`
-- Flexible array member initialization
 
 Features that won't be implemented:
 - VLA
