@@ -21,37 +21,53 @@
 
 ## Categories' description
 - Basic instruction set
+  
   Whether the basic instruction set (integer/float ops, cmps, branching,
   basically the essential stuff needed to write a program) is implemented.
 - Atomics
+  
   Whether the `__builtin_sync*`, `__builtin_atomic_*` intrinsics and `_Atomic` are
   implemented and tested.
 - Vector extension
+  
   Whether the vector instructions (SIMD) can be used.
 - Overflow builtins
+  
   Whether `__builtin_*_overflow` are implemented and tested.
 - Builtin assembler
+  
   Whether the internal assembler support the given architecture
 - TLS
+  
   Whether C11 Thread Local Storage support is available.
 - PIC
+  
   Whether Position Independent Code generation is available.
 - `long double`
+  
   Whether `long double` codegen is available.
 - Addressing modes
+  
   Whether addressing modes are used effectively.
 - Optimizations
+  
   Whether compiling with `-O1` is as reliable as `-O0`.
 - Direct compilation
+  
   Whether the direct compilation pipeline have been implemented for the target.
+  
   `C -> IR -> OBJ` as opposed to `C -> IR -> ASM -> OBJ`.
 - Test coverage
+  
   The ratio of successful codegen tests.
 - ABI
+  
   Whether the ABI have been implemented.
 - Debug build
+  
   Whether compiling with `-O0 -g` is reliable.
 - Inline assembly
+  
   Whether inline assembly support is present.
 
 
