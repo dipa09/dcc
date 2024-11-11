@@ -1,5 +1,118 @@
 # Changelog
 
+## v0.7 - 10/11/2024
+
+### Changed
+- Disable `-Wunused-function` with `-std=c89/90`, since it would cause bogus warnings
+  with `math.h`, because libc vendors use `__inline` in _standard_ headers.
+- Parse qualifiers and storage class after tag definition.
+  e.g.
+  ```c
+	  struct s0 { int x; } static;           // OK, but deprecated since C23
+	  struct s1 { int y; } const;            // 'const' is ignored, emit warning
+	  struct s2 { int z; } const typedef s2; // Error
+  ```
+  Other compilers accept the third one, but they seem to be confused about it as well.
+- Collapse `-Wattributes` and `-Wignore-attributes` into one option.
+- Enable `-Wtautological-overlap-compare` with `-Wall`.
+- More precise diagnostic message for mismatching argument count with variadic functions.
+- Use SSE4.1 instructions for `_mm_set*` when `-msse4.1` is set.
+- Disable `-gcolumn-info` by default, since gdb ignores it anyway.
+- Enable SSE version of `neg` IR instruction by default.
+- Mitigate UB on x64 for `__builtin_ctz(0)`, by encoding `bsf` with the `rep` prefix.
+- Remove functions called only by unused functions (enabled by default).
+
+
+### Added
+- Add universal charater names for strings and characters.
+
+- Add partial C23 support with the `-std=c23` switch:
+  - Add keywords `alignas`, `alingof`, `static_assert`, `thread_local`, `typeof_unqual`, `constexpr`.
+  - Add `__has_c_attribute`.
+  - Parse the new attribute syntax `[[]]`.
+  - Predefine standard macros: `__STDC_UTF_16__`, `__STDC_UTF_32__`.
+  - Add digit separators.
+  - Add predefined constants: `true`, `false` and `nullptr`.
+  - `foo()` becomes equivalent to `foo(void)`.
+  - Add type inference with `auto`.
+	Missing bit-fields initializers and traditional mode e.g. `auto int x` will be (incorrectly)
+	treated as an error.
+  - Parse declarations after labels.
+  - Add standard attributes: `unsequenced`, `reproducible`, `nodiscard`, `deprecated`, `maybe_unused`,
+	`noreturn`, `fallthrough`.
+  - Add enum type specifier.
+
+- Add `-Wextern-initializer`, enabled by default.
+- Add `-Wimplicit-fallthrough`.
+- Warn about assignments to read-only locations. e.g. `"foo"[x] = 'a';`.
+
+- Add attribute `nodebug`.
+- Add inline codegen for `__builtin_memset` also for non zero initialization values.
+- Add debug-info for bitfields.
+- Add `__builtin_memcmp` with inline simd codegen, when the size is known at compile time.
+- Add argument checking for intrinsics requiring a constant integer argument within a certain range.
+
+- Start riscv64 backend.
+  - Add `-march=rv64g` option.
+  - Predefine macros: `__riscv`, ... to complete
+
+- arm64 backend
+  - Add codegen for `__builtin_bswap/ctz/clz/clrsb/parity/ffs/popcnt`.
+  - Handle non-zero clear byte for `__builtin_memset`.
+  - Encode bitmask (logical) immediates.
+
+- x64 backned:
+  - Add all AVX/AVX2 intrinsics, except for: `_mm_broadcastb_epi*`, `_mm256_broadcastb_epi*` which
+	use EVEX encoding.
+  - Add BMI1, MOVBE, `_rdtscp`, RDRAND, RDSEED, RDPID intrinsics.
+  - Predefine `__BMI__`, `__BMI2__`, `__MOVBE__`, `__RDSEED__`, `__RDPID__`, `__RDRND__`, `__AVX__`, `__AVX2__`.
+  - Add `-mbmi`, `-mbmi2`, `-mrdrnd`, `-mrdseed`, `-mrdpid`, `-mmovbe`, `-mavx`, `-mavx2` command-line options.
+
+
+- Build more stuff:
+  [8080](https://github.com/superzazu/8080),
+  [BearSSL](https://github.com/OUIsolutions/BearSslSingle-Unit),
+  [libcox](https://github.com/symisc/libcox),
+  [luigi](https://github.com/nakst/luigi),
+  [mg](https://github.com/ibara/mg),
+  [oed](https://github.com/ibara/oed),
+  [parson](https://github.com/kgabis/parson),
+  [pl0c](https://github.com/ibara/pl0c),
+  [qbe](https://c9x.me/compile/),
+  [utf8.h](https://github.com/sheredom/utf8.h),
+  [vce](https://github.com/ibara/vce),
+  [z80](https://github.com/superzazu/z80).
+
+
+### Removed
+- Remove `-Wcast-function-type`.
+
+
+### Fixed
+- Fix segfault caused by recursive enum valuation in compile-time `__builtin_overflow_*`,
+  caused by `typeof`.
+  Now it's possible to write:
+  ```c
+  #define __builtin_add_overflow_p(a,b) __builtin_add_overflow(a, b, (typeof((a) + (b))*)0)
+  enum {
+	  A = 0x7FFFFFFF,
+	  B = 3,
+	  C = __builtin_add_overflow_p(A, B) ? 0 : A + B,
+  };
+  ```
+- Fix incorrect `sizeof` parsing with un-parenthesized member expressions, like:
+  `sizeof ((struct foo *)0)->bar`.
+- Fix multi-byte escape sequences for UTF16/32 strings/characters.
+- Fix undiagnosed `-Wdangling-else`.
+- Fix bug with `-Wtautological-overlap-compare`.
+- Fix debug-info issues
+  - Inspect `static` local variables.
+  - Step on multi-line conditional expressions.
+  - Inspect anonymous enums.
+- Fix bitfield related bugs.
+- Fix a bug with `-Wpointer-to-int-cast`.
+
+
 ## v0.6 - 28/07/2024
 
 ### Changed
@@ -61,6 +174,14 @@
 - Remove `-save-temps`.
 - Remove `-Wformat-security`.
 - Remove old debug-info code for recording type qualifiers.
+  Pros:
+  - they are not needed to actually debug an application,
+  - they make the executable bigger,
+  - implementation-wise they are akward,
+  - most people probably don't care.
+  Cons:
+  - One might want to inspect debug-info for getting AST info, but again we
+	provide better options for that.
 - Remove `file_scope` attribute. Now it's a custom attribute.
 
 
@@ -76,6 +197,9 @@
 
 ### Changed
 - Show function definition on calls with mismatch argument count.
+- `-Wpedantic` with `-std=c89` is best effort, it won't catch all later features uses.
+  Most people have move on to later standards, so it doesn't make sense to add
+  complexity for this.
 - Display helper message for invalid multi-dimensional arrays only once,
   since it's always the same.
 - Change `__FUNCTION__` behavior like MSVC.
@@ -127,12 +251,16 @@
   add support for pattern initialization.
 - Fuse load followed by arithmetic instruction. Enable this by default, since
   the compiler's performance didn't resent much.
-- Do not allow `extern void` variables.
-- Set max array size to 4GB.
+- Do not allow `extern void` variables. For some reason GCC and CLANG allow them, while MSVC doesn't.
+- Set max array size to 4GB. MSVC limit is 2GB, CLANG limit is much bigger
+  (thousand of TB) and GCC even larger (`__SIZE_MAX__/2` or something).
+  In practice the max stack size is around 10-30MB and allocating arrays that big is unusual.
+  Maybe we should add a flag (-fstack-limit maybe?) to allow huge arrays, since they might be
+  used for debugging purposes.
 - Disable `__label__` parsing.
 - Do not allow unicode identifiers, since it adds complexity for an arguably useless
   feature (i.e. code is written in english).
-  
+
   It's also a source of security [vulnerabilities](http://www.unicode.org/reports/tr55/).
 
 
