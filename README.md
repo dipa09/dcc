@@ -3,32 +3,45 @@ dcc is an optimizing compiler for the C language, targetting x86_64 and aarch64 
 It currently runs on Linux.
 
 
-## [Features](https://github.com/dipa09/dcc/blob/main/status.md)
+## Features
 - Built-in C preprocessor.
-- C11.
+- C11 and partial C23.
 - Good diagnostic messages.
 - Mostly compatible with gcc.
 - Several common extensions.
-- Intel intrinsics up to SSE4.2.
+- Intel intrinsics up to AVX2.
 - x86-64 back-end.
-- Built-in assembler.
+- Integrated assembler.
 - Debug info in DWARF4 format.
 - ~10 times faster than gcc.
 - Plugin API for accessing the AST and extending the compiler.
 
 
-## Status
-| Target              | Status     | Note                          |
-|---------------------|------------|-------------------------------|
-| `x86_64-linux-gnu`  | alpha      | `-O0 -g` OK, `-O1` incomplete |
-| `aarch64-linux-gnu` | incomplete |                               |
+## [Status](./backends_status.md)
+| Target              | Status     |
+|---------------------|------------|
+| `x86_64-linux-gnu`  | alpha      |
+| `aarch64-linux-gnu` | incomplete |
+| `riscv64-linux-gnu` | incomplete |
+
 
 [Demo (06/05/2024)](https://www.youtube.com/watch?v=TPWxtAFwiks)
 
-[Changelog](https://github.com/dipa09/dcc/blob/main/CHANGELOG.md)
+In the demo I show:
+- self-compilation,
+- debug info,
+- good error messages and warnings,
+- preprocessor oddities,
+- emulating gcc vector extension by using the operator overloading attribute,
+- custom reflection system through the plugin API.
+
+
+[Changelog](./CHANGELOG.md)
 
 
 Successful builds:
+[8080](https://github.com/superzazu/8080),
+[BearSSL](https://github.com/OUIsolutions/BearSslSingle-Unit),
 [Meow hash](https://github.com/cmuratori/meow_hash),
 [Nuklear](https://github.com/Immediate-Mode-UI/Nuklear),
 [TermGL](https://github.com/wojciech-graj/TermGL),
@@ -37,10 +50,17 @@ Successful builds:
 [gc](https://github.com/mkirchner/gc),
 [genann](https://github.com/codeplea/genann),
 [lemon](https://compiler-dept.github.io/lemon),
+[libcox](https://github.com/symisc/libcox),
+[luigi](https://github.com/nakst/luigi),
+[mg](https://github.com/ibara/mg),
 [minilua](https://github.com/edubart/minilua),
 [minivorbis](https://github.com/edubart/minivorbis),
 [miniz-3.0.2](https://github.com/richgel999/miniz),
+[oed](https://github.com/ibara/oed),
+[parson](https://github.com/kgabis/parson),
+[pl0c](https://github.com/ibara/pl0c),
 [q3vm](https://github.com/jnz/q3vm),
+[qbe](https://c9x.me/compile/),
 [quadsort](https://github.com/scandum/quadsort),
 [renderer](https://github.com/zauonlok/renderer),
 [rpng](https://github.com/raysan5/rpng),
@@ -48,7 +68,28 @@ Successful builds:
 [sqlite](https://github.com/sqlite/sqlite),
 [stb](https://github.com/nothings/stb/),
 [tinn](https://github.com/glouw/tinn),
-[treecc](https://github.com/rweather/treecc).
+[treecc](https://github.com/rweather/treecc),
+[utf8.h](https://github.com/sheredom/utf8.h),
+[vce](https://github.com/ibara/vce),
+[z80](https://github.com/superzazu/z80).
+
+
+## Performance and code quality (11/2024)
+Measurements done like the previous (07/2024).
+
+- `dcc-0.7` built with `dcc-0.6`
+- `dcc.0` built with `dcc-0.7 -O0`
+- `dcc.1` built with `dcc-0.7 -O1`
+- `dcc.2` built with `gcc-13.2.0 -O1 -fwrapv -fno-strict-aliasing -fno-delete-null-pointer-checks -fno-omit-frame-pointer`
+
+| Compiler |         Cycles |   Instructions | Time [s] |  Obj Size | Comp. Size | Comp. Speed [LOC/s] |
+|----------|---------------:|---------------:|----------|----------:|-----------:|--------------------:|
+| dcc.2    |    879,359,441 |  1,320,932,448 | 0.27442  | 1,074,906 |    878,472 |          289,304.72 |
+| dcc.1    |  1,168,743,273 |  1,763,527,317 | 0.36039  | 1,074,906 |    988,456 |          220,291.91 |
+| dcc.0    |  1,394,913,162 |  2,120,576,066 | 0.42145  | 1,074,906 |  1,007,832 |          188,375.85 |
+| gcc-13.2 | 10,586,317,041 | 16,270,923,387 | 3.19950  | 1,372,336 |  1,756,536 |           24,813.56 |
+
+`dcc.1` is 14.49% faster than `dcc.0`, but 31.33% slower than `dcc.2`.
 
 
 ## Performance and code quality (07/2024)
@@ -99,11 +140,35 @@ Compilation speed for `dcc.2`: 298621.99 LOC/s
 
 
 ## Testing
-The compiler is tested against an internal testsuite currently composed by ~700 tests (~48K SLOC) and
+The compiler is tested against an internal testsuite currently composed by ~800 tests (~63K SLOC) and
 by building open source projects.
 
-[csmith](https://github.com/csmith-project/csmith) is also used, however at some point the compiler becomes immune to it.
+[csmith](https://github.com/csmith-project/csmith) is also used, however at some
+point the compiler becomes immune to it.
 
 
-## Contact
-For questions about the project you can ask at davide.dipaolo09@gmail.com
+## Does compilation time matter? (11/10/2024)
+Rougly a year ago I started measuring the time spent waiting for the compiler
+for the debug build, so no optimizations enabled, and these are the results:
+
+|                                    | gcc         | dcc         |
+|------------------------------------|------------:|------------:|
+| Total complete timings             | 14271       | 1855        |
+| Total incomplete timings           | 8416        | 697         |
+| Days between first and last timing | 561         | 74          |
+| Slowest build time                 | 11.599s     | 1.423s      |
+| Fastest build time                 | 1.679s      | 0.483s      |
+| Average build time                 | 2.958s      | 0.546s      |
+| Total time spent waiting           | 11h:43m:34s | 00h:16m:53s |
+
+I've been using dcc (unoptimized, with assertions on) for building the next
+version of dcc just for a couple of months, in the mean time I haven't used gcc
+at all except for double checking, so I am no longer collecting data about gcc
+performance. The average build time of dcc can be used to take a guess about the
+potential time save.
+
+	(14271*0.546s)/3600 = 2.16h => ~9 hours saved
+
+Assuming that dcc becomes 2x slower
+
+	(2*14271*0.546s)/3600 = 4.33h => ~6 hours saved
