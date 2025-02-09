@@ -1,28 +1,29 @@
-dcc is an optimizing compiler for the C language, targetting x86_64 and aarch64 (arm64).
+dcc is an optimizing compiler for the C language.
 
-It currently runs on Linux.
+It currently runs on x86_64 Linux and it can cross-compile to aarch64 (arm64).
 
 
 ## Features
 - Built-in C preprocessor.
-- C11 and partial C23.
+- C11 and partial C23 support.
 - Good diagnostic messages.
 - Mostly compatible with gcc.
-- Several common extensions.
+- Several common GCC extensions, plus some new one.
 - Intel intrinsics up to AVX2.
-- x86-64 back-end.
+- Backends: aarch64, x86-64.
 - Integrated assembler.
 - Debug info in DWARF4 format.
-- ~10 times faster than gcc.
+- ~12 times faster than gcc.
 - Plugin API for accessing the AST and extending the compiler.
+- UB Sanitizer
 
 
 ## [Status](./backends_status.md)
-| Target              | Status     |
-|---------------------|------------|
-| `x86_64-linux-gnu`  | alpha      |
-| `aarch64-linux-gnu` | incomplete |
-| `riscv64-linux-gnu` | incomplete |
+| Target              | Status         |
+|---------------------|----------------|
+| `x86_64-linux-gnu`  | alpha-stable   |
+| `aarch64-linux-gnu` | alpha-unstable |
+| `riscv64-linux-gnu` | incomplete     |
 
 
 [Demo (06/05/2024)](https://www.youtube.com/watch?v=TPWxtAFwiks)
@@ -45,33 +46,69 @@ Successful builds:
 [Meow hash](https://github.com/cmuratori/meow_hash),
 [Nuklear](https://github.com/Immediate-Mode-UI/Nuklear),
 [TermGL](https://github.com/wojciech-graj/TermGL),
+[Verstable](https://github.com/JacksonAllan/Verstable),
+[bf-x86](https://github.com/skeeto/bf-x86),
+[brainc](https://github.com/detectivekaktus/brainc),
+[catimg](https://github.com/posva/catimg),
+[cccc](https://github.com/skeeto/cccc),
+[chess](https://github.com/weirddan455/chess),
 [chibicc](https://github.com/rui314/chibicc),
+[clex](https://github.com/h2337/clex?),
 [cproc](https://sr.ht/~mcf/cproc),
+[fcpp](https://github.com/bagder/fcpp),
 [gc](https://github.com/mkirchner/gc),
 [genann](https://github.com/codeplea/genann),
 [lemon](https://compiler-dept.github.io/lemon),
+[libaca](https://github.com/dongyx/libaca),
 [libcox](https://github.com/symisc/libcox),
 [luigi](https://github.com/nakst/luigi),
+[mandel-simd](https://github.com/skeeto/mandel-simd),
 [mg](https://github.com/ibara/mg),
 [minilua](https://github.com/edubart/minilua),
 [minivorbis](https://github.com/edubart/minivorbis),
 [miniz-3.0.2](https://github.com/richgel999/miniz),
 [oed](https://github.com/ibara/oed),
+[optparse](https://github.com/skeeto/optparse),
 [parson](https://github.com/kgabis/parson),
+[pdjson](https://github.com/skeeto/pdjson),
 [pl0c](https://github.com/ibara/pl0c),
+[psh](https://github.com/proh14/psh),
 [q3vm](https://github.com/jnz/q3vm),
 [qbe](https://c9x.me/compile/),
+[qoi](https://github.com/phoboslab/qoi),
+[quad-tree](https://github.com/leonmavr/quad-tree),
 [quadsort](https://github.com/scandum/quadsort),
+[race64](https://github.com/skeeto/race64),
 [renderer](https://github.com/zauonlok/renderer),
 [rpng](https://github.com/raysan5/rpng),
 [siod](https://github.com/deriito/siod-v3.0),
+[space-shooter.c](https://github.com/tsherif/space-shooter.c),
 [sqlite](https://github.com/sqlite/sqlite),
 [stb](https://github.com/nothings/stb/),
 [tinn](https://github.com/glouw/tinn),
 [treecc](https://github.com/rweather/treecc),
+[trie](https://github.com/skeeto/trie),
 [utf8.h](https://github.com/sheredom/utf8.h),
 [vce](https://github.com/ibara/vce),
 [z80](https://github.com/superzazu/z80).
+
+
+## Performance and code quality (02/2025)
+Measurements done like the previous (07/2024).
+
+- `dcc-0.8` built with `dcc-0.7`
+- `dcc.0` built with `dcc-0.8 -O0`
+- `dcc.1` built with `dcc-0.8 -O1 -fno-inline`
+- `dcc.2` built with `gcc-13.3.0 -O1 -fwrapv -fno-strict-aliasing -fno-delete-null-pointer-checks -fno-omit-frame-pointer`
+- `dcc.3` built with `gcc-13.3.0 -O3`
+
+| Compiler |        Cycles |   Instructions | Time [s] |  Obj Size | Comp. Size | Comp. Speed [LOC/s] |
+|----------|--------------:|---------------:|----------|----------:|-----------:|--------------------:|
+| dcc.3    |   772,378,385 |  1,108,315,903 | 0.23823  | 1,074,184 |  1,276,768 |          333,253.58 |
+| dcc.2    |   875,339,855 |  1,333,849,871 | 0.26986  | 1,074,184 |    949,728 |          294,193.29 |
+| dcc.1    | 1,170,765,841 |  1,832,543,712 | 0.36062  | 1,074,184 |  1,002,304 |          220,151.41 |
+| dcc.0    | 1,382,189,150 |  2,105,052,535 | 0.41259  | 1,074,184 |  1,035,072 |          192,421.05 |
+| gcc-13.3 | 9,541,270,463 | 15,113,325,935 | 2.8327   | 1,372,344 |  1,023,032 |           28,026.62 |
 
 
 ## Performance and code quality (11/2024)
