@@ -1,5 +1,102 @@
 # Changelog
 
+## v0.8 - 09/02/2025
+
+### Added
+- C23
+  - Add range checking for `enum : bool`.
+- x86_64
+  - Add `-maes`, `-mfma` command-line options.
+  - Add FMA intrinsics.
+  - Add `neg` instruction fusion for x64.
+  - Add remaining SSE4.2 intrinsics.
+  - Handle parameter passing of struct/union by value with `va_arg`.
+- arm64
+  - Add `constructor/destructor` attributes.
+  - Add `__builtin_prefetch`, `__builtin_signbit`, `__builtin_trap`.
+  - Add overflows builtins.
+  - Add `__sync_*` builtins.
+  - Add `__atomic_*` builtins.
+  - Add TLS support.
+- Assembler
+  -  Add `.arch` directive for arm64.
+  - `.globl/.global` now accept a list of symbols.
+  - `.comm` now accepts an optional third argument for specifying the alignment.
+- Add `-fspell-checking` for disabling spell checking in diagnostics.
+- Add human readable aliases for some command line options.
+- Add `--print-effective-triple` and `--print-multiarch` (they are equivalent).
+- Add `-fstack-usage`.
+- Add `-finstrument-functions` and `no_instrument_function` attribute.
+- Add `-fzero-initialized-in-bss`.
+- Add `-s`.
+- Add `-nostdlib`, `-nostartfiles` and `-T` linker options.
+- Add `-fdollars-in-identifiers`.
+- Add `-msse2` for gcc compatiblity.
+- Add UB Sanitizer
+  - Add `-fsanitize=alignment`.
+  - Add `-fsanitize=bool`.
+  - Add `-fsanitize=bounds`.
+  - Add `-fsanitize=enum`.
+  - Add `-fsanitize=float-divide-by-zero` (no `long double`).
+  - Add `-fsanitize=integer-divide-by-zero`.
+  - Add `-fsanitize=leak`.
+  - Add `-fsanitize=nonnull-attribute`.
+  - Add `-fsanitize=null`.
+  - Add `-fsanitize=pointer-overflow`.
+  - Add `-fsanitize=shift-base`.
+  - Add `-fsanitize=shift-exponent`.
+  - Add `-fsanitize=signed-integer-overflow` (x64 only).
+  - Add `-fsanitize=unreachable`.
+  - Add `no_sanitize_undefined` attribute.
+- Add `-Wuninitilaized`.
+
+
+- Build stuff:
+  [Verstable](https://github.com/JacksonAllan/Verstable),
+  [bf-x86](https://github.com/skeeto/bf-x86),
+  [brainc](https://github.com/detectivekaktus/brainc),
+  [catimg](https://github.com/posva/catimg),
+  [cccc](https://github.com/skeeto/cccc),
+  [chess](https://github.com/weirddan455/chess),
+  [clex](https://github.com/h2337/clex),
+  [fcpp](https://github.com/bagder/fcpp),
+  [mandel-simd](https://github.com/skeeto/mandel-simd),
+  [optparse](https://github.com/skeeto/optparse),
+  [pdjson](https://github.com/skeeto/pdjson),
+  [psh](https://github.com/proh14/psh),
+  [qoi](https://github.com/phoboslab/qoi),
+  [quad-tree](https://github.com/leonmavr/quad-tree),
+  [race64](https://github.com/skeeto/race64),
+  [space-shooter.c](https://github.com/tsherif/space-shooter.c),
+  [trie](https://github.com/skeeto/trie),
+
+
+### Changed
+- Align stack allocations bigger than 16 bytes to 16. Match gcc/clang behavior since it also makes sense.
+- Register allocator improvements:
+  - Select the right argument register for function pointers and forward-declared functions.
+  - Add heuristic for intrinsics and fused instructions.
+- Update `__builtin_memcpy/memset` codegen to operate on 32 bytes chunks when AVX is enabled.
+- Limit TUs size to 4GB, to reduce compiler's memory footprint.
+
+
+### Fixed
+- Fix bogus warning with `-Wformat` and `+` modifier.
+- Fix SysV ABI classification bug with odd struct layout, discovered through fuzzing.
+- Apply C99 inline semantic.
+- Fix preprocessor bug: correctly ignore unknown pragmas.
+- Fix preprocessor bug: bogus replacement when `__VA_ARGS__` is omitted.
+- Define missing constants in `<immintrin.h>`.
+- Fix missing `-Wunused-function` for infinitely recursive functions.
+- Fix bogus `-Wimplicit-fallthrough`.
+- Fix `-Wparentheses` bug.
+- Fix `-Wundefined-internal`: warn about all undefined static functions.
+
+
+### Removed
+- Remove `-fcheck-recover` and `-fcheck-signed-overflow`, in favor of the well-known `-fsanitize`.
+
+
 ## v0.7 - 10/11/2024
 
 ### Changed
@@ -63,7 +160,7 @@
 
 - x64 backned:
   - Add all AVX/AVX2 intrinsics, except for: `_mm_broadcastb_epi*`, `_mm256_broadcastb_epi*` which
-	use EVEX encoding.
+	require EVEX encoding.
   - Add BMI1, MOVBE, `_rdtscp`, RDRAND, RDSEED, RDPID intrinsics.
   - Predefine `__BMI__`, `__BMI2__`, `__MOVBE__`, `__RDSEED__`, `__RDPID__`, `__RDRND__`, `__AVX__`, `__AVX2__`.
   - Add `-mbmi`, `-mbmi2`, `-mrdrnd`, `-mrdseed`, `-mrdpid`, `-mmovbe`, `-mavx`, `-mavx2` command-line options.
