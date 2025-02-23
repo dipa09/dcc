@@ -1,22 +1,23 @@
 
 ## Summary
-| Feature               | `x86_64`   | `aarch64` | `riscv64` |
-|-----------------------|------------|-----------|-----------|
-| Basic instruction set | OK         | OK        | No        |
-| Atomics               | OK         | No        | No        |
-| Vector extensions     | Partial    | No        | No        |
-| Overflow builtins     | OK         | No        | No        |
-| Builtin assembler     | OK         | No        | No        |
-| TLS                   | OK         | No        | No        |
-| PIC                   | Partial    | No        | No        |
-| `long double`         | OKish      | No        | No        |
-| Addressing modes      | OK         | Partial   | No        |
-| Optimizations         | Incomplete | No        | No        |
-| Direct compilation    | No         | No        | No        |
-| Test coverage         | 98.907%    | ??        | ??        |
-| ABI                   | OK         | Partial   | No        |
-| Debug build           | OK         | No        | No        |
-| Inline assembly       | Partial    | No        | No        |
+| Feature               | `x86_64`   | `aarch64`  | `riscv64` |
+|-----------------------|------------|------------|-----------|
+| Basic instruction set | OK         | OK         | No        |
+| Atomics               | OK         | OK         | No        |
+| Vector extensions     | AVX2       | No         | No        |
+| Overflow builtins     | OK         | OK         | No        |
+| Builtin assembler     | OK         | No         | No        |
+| TLS                   | OK         | OK         | No        |
+| PIC                   | Partial    | No         | No        |
+| `long double`         | OKish      | Incomplete | No        |
+| Addressing modes      | OK         | Partial    | No        |
+| Optimizations         | Incomplete | Incomplete | No        |
+| Direct compilation    | Partial    | No         | No        |
+| Test coverage         | 96.361%    | 94.969%    | 0%        |
+| ABI                   | OK         | OK         | No        |
+| Debug build           | OK         | Partial    | No        |
+| Inline assembly       | Partial    | No         | No        |
+| Sanitizers            | Partial    | Partial    | No        |
 
 
 ## Categories' description
